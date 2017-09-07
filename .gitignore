@@ -1,0 +1,5 @@
+.DS_Store
+.eggs
+imgcrunch3.py
+build/
+dist/
