@@ -19,14 +19,20 @@ class Application(Frame):
         global imgSrc
         global imgDest
         global imgCrunch
+        global inDir
+        global outDir
+        global comp
         imgLogo = PhotoImage(file='img/logo.gif')
         imgSrc = PhotoImage(file='img/btnSrc.gif')
         imgDest = PhotoImage(file='img/btnDest.gif')
         imgCrunch = PhotoImage(file='img/btnCrunch.gif')
+        inDir = '/Users/' + os.environ['USER'] + '/Desktop'
+        outDir = '/Users/' + os.environ['USER'] + '/Desktop'
+        comp = 80
 
         self.logo = Canvas(self)
         self.logo.create_image(180, 100, image=imgLogo)
-        self.logo['height'] = 200
+        self.logo['height'] = 180
         self.logo['width'] = 360
         self.logo.grid(row = 0, column = 0)
 
@@ -40,13 +46,16 @@ class Application(Frame):
         self.source_button.grid(row = 1, column = 0)
 
         #source folder message
-        self.source_text = Text(self, width = 45, height = 1, wrap = WORD)
+        self.source_text = Text(self, width = 27, height = 1, wrap = WORD, cursor='arrow')
         self.source_text['padx'] = 20
-        self.source_text['pady'] = 10
+        self.source_text['pady'] = 5
         self.source_text['bg'] = '#ffffff'
         self.source_text['highlightcolor'] = '#ffffff'
+        self.source_text['background'] = '#ffffff'
+        self.source_text.insert(0.0, inDir, 'tag-center')
         self.source_text.tag_configure('tag-center', justify='center')
         self.source_text.grid(row = 2, column = 0)
+        self.source_text.configure(state = 'disabled')
 
         #destination folder select button
         self.destination_button = Label(self)
@@ -57,14 +66,23 @@ class Application(Frame):
         self.destination_button.bind('<Button-1>', self.destination_folder)
         self.destination_button.grid(row = 3, column = 0)
 
-        #source folder message
-        self.destination_text = Text(self, width = 45, height = 1, wrap = WORD)
+        #destination folder message
+        self.destination_text = Text(self, width = 27, height = 1, wrap = WORD, cursor='arrow')
         self.destination_text['padx'] = 20
-        self.destination_text['pady'] = 10
+        self.destination_text['pady'] = 5
         self.destination_text['bg'] = '#ffffff'
         self.destination_text['highlightcolor'] = '#ffffff'
+        self.destination_text.insert(0.0, outDir, 'tag-center')
         self.destination_text.tag_configure('tag-center', justify='center')
         self.destination_text.grid(row = 4, column = 0)
+        self.destination_text.configure(state = 'disabled')
+
+        #compression rate
+        self.compression = Scale(self, from_ = 0, to = 100, orient = HORIZONTAL, width = 20, length = 140)
+        # self.compression['borderwidth'] = 1
+        self.compression.set(comp)
+        # self.compresson['height'] = 10
+        self.compression.grid(row = 5, column = 0, pady=(0, 15))
 
         #crunch button
         self.crunch_button = Label(self)
@@ -73,42 +91,51 @@ class Application(Frame):
         # self.crunch_button['width'] = '24'
         # self.crunch_button['command'] = self.crunch
         self.crunch_button.bind('<Button-1>', self.crunch)
-        self.crunch_button.grid(row = 5, column = 0)
+        self.crunch_button.grid(row = 6, column = 0)
 
         #progress message
-        self.progress_text = Text(self, width = 45, height = 1, wrap = WORD)
+        self.progress_text = Text(self, width = 45, height = 1, wrap = WORD, cursor='arrow')
         self.progress_text['padx'] = 20
-        self.progress_text['pady'] = 10
+        self.progress_text['pady'] = 5
         self.progress_text['bg'] = '#ffffff'
         self.progress_text['highlightcolor'] = '#ffffff'
         self.progress_text.tag_configure('tag-center', justify='center')
-        self.progress_text.grid(row = 6, column = 0)
+        self.progress_text.configure(state = 'disabled')
+        self.progress_text.grid(row = 7, column = 0)
 
     def source_folder(self, event):
         #select source folder
         global inDir
         inDir = tkFileDialog.askdirectory()
+        self.source_text.configure(state='normal')
         self.source_text.delete(0.0, END)
+        if inDir == '':
+            inDir = '/Users/' + os.environ['USER'] + '/Desktop'
         self.source_text.insert(0.0, inDir, 'tag-center')
+        self.source_text.configure(state='disabled')
 
     def destination_folder(self, event):
         #select source folder
         global outDir
         outDir = tkFileDialog.askdirectory()
+        self.destination_text.configure(state = 'normal')
         self.destination_text.delete(0.0, END)
+        if outDir == '':
+            outDir = '/Users/' + os.environ['USER'] + '/Desktop'
         self.destination_text.insert(0.0, outDir, 'tag-center')
+        self.destination_text.configure(state = 'disabled')
 
     def crunch(self, event):
         try:
             inDir
             outDir
-
         except NameError:
             self.progress_text.delete(0.0, END)
             self.progress_text.insert(0.0, 'No source/destination', 'tag-center')
         else:
             print "defined"
             #crunch some images
+            self.progress_text.configure(state = 'normal')
             self.progress_text.delete(0.0, END)
             self.progress_text.insert(0.0, 'Crunching jpegs...', 'tag-center')
             self.progress_text.update()
@@ -127,17 +154,19 @@ class Application(Frame):
                     else:
                         imgOut = outDir.replace(' ', '\ ') + '/' + jpeg.replace(' ', '\ ')
                     sep = '>'
-                    t = string.Template('./mozcjpeg -quality 70 $imgIn > $imgOut')
+                    comp = self.compression.get()
+                    print comp
+                    t = string.Template('./mozcjpeg -quality %s $imgIn > $imgOut' % (comp))
                     s = t.substitute(vars())
                     print(s)
                     subprocess.call([s], shell=True)
                 else:
                     self.progress_text.delete(0.0, END)
                     self.progress_text.insert(0.0, 'Done!', 'tag-center')
-
+                    self.progress_text.configure(state = 'disabled')
 root = Tk()
-root.title('ImgCrunch beta1')
-root.geometry('364x500+60+60')
+root.title('ImgCrunch beta2')
+root.geometry('364x520+60+60')
 
 app = Application(root)
 
