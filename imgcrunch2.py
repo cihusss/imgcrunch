@@ -22,10 +22,10 @@ class Application(Frame):
         global inDir
         global outDir
         global comp
-        imgLogo = PhotoImage(file='img/logo.gif')
-        imgSrc = PhotoImage(file='img/btnSrc.gif')
-        imgDest = PhotoImage(file='img/btnDest.gif')
-        imgCrunch = PhotoImage(file='img/btnCrunch.gif')
+        imgLogo = PhotoImage(file = 'img/logo.gif')
+        imgSrc = PhotoImage(file = 'img/btnSrc.gif')
+        imgDest = PhotoImage(file = 'img/btnDest.gif')
+        imgCrunch = PhotoImage(file = 'img/btnCrunch.gif')
         inDir = '/Users/' + os.environ['USER'] + '/Desktop'
         outDir = '/Users/' + os.environ['USER'] + '/Desktop'
         comp = 80
@@ -46,14 +46,14 @@ class Application(Frame):
         self.source_button.grid(row = 1, column = 0)
 
         #source folder message
-        self.source_text = Text(self, width = 27, height = 1, wrap = WORD, cursor='arrow')
+        self.source_text = Text(self, width = 27, height = 1, wrap = WORD, cursor = 'arrow')
         self.source_text['padx'] = 20
         self.source_text['pady'] = 5
         self.source_text['bg'] = '#ffffff'
         self.source_text['highlightcolor'] = '#ffffff'
         self.source_text['background'] = '#ffffff'
         self.source_text.insert(0.0, inDir, 'tag-center')
-        self.source_text.tag_configure('tag-center', justify='center')
+        self.source_text.tag_configure('tag-center', justify = 'center')
         self.source_text.grid(row = 2, column = 0)
         self.source_text.configure(state = 'disabled')
 
@@ -73,7 +73,7 @@ class Application(Frame):
         self.destination_text['bg'] = '#ffffff'
         self.destination_text['highlightcolor'] = '#ffffff'
         self.destination_text.insert(0.0, outDir, 'tag-center')
-        self.destination_text.tag_configure('tag-center', justify='center')
+        self.destination_text.tag_configure('tag-center', justify = 'center')
         self.destination_text.grid(row = 4, column = 0)
         self.destination_text.configure(state = 'disabled')
 
@@ -82,7 +82,7 @@ class Application(Frame):
         # self.compression['borderwidth'] = 1
         self.compression.set(comp)
         # self.compresson['height'] = 10
-        self.compression.grid(row = 5, column = 0, pady=(0, 15))
+        self.compression.grid(row = 5, column = 0, pady = (0, 15))
 
         #crunch button
         self.crunch_button = Label(self)
@@ -94,12 +94,12 @@ class Application(Frame):
         self.crunch_button.grid(row = 6, column = 0)
 
         #progress message
-        self.progress_text = Text(self, width = 45, height = 1, wrap = WORD, cursor='arrow')
+        self.progress_text = Text(self, width = 45, height = 1, wrap = WORD, cursor = 'arrow')
         self.progress_text['padx'] = 20
         self.progress_text['pady'] = 5
         self.progress_text['bg'] = '#ffffff'
         self.progress_text['highlightcolor'] = '#ffffff'
-        self.progress_text.tag_configure('tag-center', justify='center')
+        self.progress_text.tag_configure('tag-center', justify = 'center')
         self.progress_text.configure(state = 'disabled')
         self.progress_text.grid(row = 7, column = 0)
 
@@ -107,12 +107,12 @@ class Application(Frame):
         #select source folder
         global inDir
         inDir = tkFileDialog.askdirectory()
-        self.source_text.configure(state='normal')
+        self.source_text.configure(state = 'normal')
         self.source_text.delete(0.0, END)
         if inDir == '':
             inDir = '/Users/' + os.environ['USER'] + '/Desktop'
         self.source_text.insert(0.0, inDir, 'tag-center')
-        self.source_text.configure(state='disabled')
+        self.source_text.configure(state = 'disabled')
 
     def destination_folder(self, event):
         #select source folder
@@ -159,7 +159,7 @@ class Application(Frame):
                     t = string.Template('./mozcjpeg -quality %s $imgIn > $imgOut' % (comp))
                     s = t.substitute(vars())
                     print(s)
-                    subprocess.call([s], shell=True)
+                    subprocess.call([s], shell = True)
                 else:
                     self.progress_text.delete(0.0, END)
                     self.progress_text.insert(0.0, 'Done!', 'tag-center')
