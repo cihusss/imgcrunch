@@ -7,7 +7,7 @@ Compile into a stand-alone MacOS app using the following command in your termina
 
 "python setup.py py2app"
 
-If all goes well your app will appear in the "dist" folder.
+If all goes well your compiled app will appear in the "dist" folder.
 
 Cheers!
-Teo
+cihusss
